@@ -1,5 +1,9 @@
 package application;
 
+/*
+ * Authors: Andres Llinas & Daniel Bonilla
+ */
+
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
@@ -10,10 +14,7 @@ import java.util.*;
 /*
  * Un componente grafico para graficar el contenido de un arbol binario
  * 
- * Uso simple: Para nosotros va a estar en el constructor de una expresion
- *  Node root = build_tree() //based on stringexpression = "(A v B)"
- *	TreeDisplay display = new TreeDisplay(stringexpression);
- *	display.setRoot(root);
+
  */
 
 public class TreeDisplay extends JComponent {
@@ -72,13 +73,13 @@ public class TreeDisplay extends JComponent {
 		Nodo rightmost = root;
 		while (rightmost.getDerecho() != null)
 			rightmost = rightmost.getDerecho();
-		int leftPad = fuente.stringWidth(leftmost.getSimbolo() + "") / 2;
-		int rightPad = fuente.stringWidth(rightmost.getSimbolo() + "") / 2;
-		int textHeight = fuente.getHeight();
+		int leftPad = fuente.stringWidth(leftmost.getData() + "") / 2;
+		int rightPad = fuente.stringWidth(rightmost.getData() + "") / 2;
+		int altoTexto = fuente.getHeight();
 
 		// Dibuja el arbol
-		drawTree(g2, root, leftPad + ARC_PAD, d.width - rightPad - ARC_PAD, textHeight / 2 + ARC_PAD,
-				(d.height - textHeight - 2 * ARC_PAD) / (depth - 1));
+		drawTree(g2, root, leftPad + ARC_PAD, d.width - rightPad - ARC_PAD, altoTexto / 2 + ARC_PAD,
+				(d.height - altoTexto - 2 * ARC_PAD) / (depth - 1));
 
 	}
 	/*
@@ -112,23 +113,23 @@ public class TreeDisplay extends JComponent {
 		}
 
 		// mide el tamaño del texto
-		FontMetrics font = g2.getFontMetrics();
-		String text = nodo.getSimbolo() + "";
-		int textHeight = font.getHeight();
-		int textWidth = font.stringWidth(text);
+		FontMetrics fuente = g2.getFontMetrics();
+		String text = nodo.getData() + "";
+		int alturaTexto = fuente.getHeight();
+		int anchoTexto = fuente.stringWidth(text);
 
 		// dibuja el cuadro al rededor del nodo
-		Rectangle2D.Double box = new Rectangle2D.Double(x - textWidth / 2 - ARC_PAD, y - textHeight / 2 - ARC_PAD,
-				textWidth + 2 * ARC_PAD, textHeight + 2 * ARC_PAD);
+		Rectangle2D.Double caja = new Rectangle2D.Double(x - anchoTexto / 2 - ARC_PAD, y - alturaTexto / 2 - ARC_PAD,
+				anchoTexto + 2 * ARC_PAD, alturaTexto + 2 * ARC_PAD);
 		Color c = new Color(187, 224, 227);
 		g2.setPaint(c);
-		g2.fill(box);
+		g2.fill(caja);
 		// Dibuja el borde negro
 		g2.setPaint(Color.black);
-		g2.draw(box);
+		g2.draw(caja);
 
 		// Dibuja el texto
-		g2.drawString(text, x - textWidth / 2, y + textHeight / 2);
+		g2.drawString(text, x - anchoTexto / 2, y + alturaTexto / 2);
 
 		// Dibuja los hijos
 		drawTree(g2, nodo.getIzquierdo(), minX, x, nextY, yIncr);

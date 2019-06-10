@@ -2,12 +2,12 @@ package Mundo;
 
 class ParseError extends Exception {
 	private String cadena;
-	private final boolean error;
 	String errorString;
 
 	public ParseError(String cadena) {
+
 		this.cadena = cadena.toUpperCase();
-		error = isError();
+		this.cadena = cadena.replaceAll(" ", "");
 		if (isError())
 			errorString = defineElError();
 	}
@@ -17,21 +17,23 @@ class ParseError extends Exception {
 	}
 
 	String defineElError() {
-		cadena = cadena.replaceAll(" ", "");
+
+		if (cadena.equals("()")) {
+			return "Ingrese una expresion con precedencia";
+		}
 
 		for (char c : cadena.toCharArray())
-			// -------------------------------------------------------------------------------------------------------------------------
 			if ((!((int) c >= (int) 'A' && (int) c <= (int) 'Z')) && c != '!' && c != '^' && c != 'v' && c != '('
 					&& c != ')' && c != '>' && c != '#') { // Si el caracter no es una letra entre A y Z, o un
-															// ^,v,!,(,). Entonces hay un
+															// ^,v,!,(,),>,#. Entonces hay un
 				// problema
 				return (c + " no es un operador valido ");
 			}
 
-		char[] r = cadena.toCharArray();
+		char[] arregloCaracteres = cadena.toCharArray();
 		int grado = 0;
 
-		for (char c : r) // Itera por todo el arreglo
+		for (char c : arregloCaracteres) // Itera por todo el arreglo
 		{
 			switch (c) // Y cuenta para asegurarse que para cada ( hay un )
 			{
@@ -53,40 +55,45 @@ class ParseError extends Exception {
 		}
 
 		cadena = cadena.trim();
-
-		if (cadena.length() <= 1) {
-			return ("Ingrese la expresion al menos dentro de un par de parentesis");
-		}
-//-------------------------------------------------------------------------------
-		for (int i = 0; i < r.length; i++) { // Si hay caracteres invalidos a la izquierda o a la derecha de un atomo
-			if ((int) r[i] >= (int) 'A' && (int) r[i] <= (int) 'Z') {
-				if (r[i - 1] != '!' && r[i - 1] != '(' && r[i - 1] != 'v' && r[i - 1] != '^' && r[i - 1] != '>'
-						&& r[i - 1] != '#') {
-					return ("Caracter invalido: Es invalido para " + r[i] + " tener un '" + r[i - 1]
-							+ "'a su izquierda.");
+		for (int i = 0; i < arregloCaracteres.length; i++) { // Si hay caracteres invalidos a la izquierda o a la
+																// derecha de un atomo
+			if ((int) arregloCaracteres[i] >= (int) 'A' && (int) arregloCaracteres[i] <= (int) 'Z') {
+				if (arregloCaracteres[i - 1] != '!' && arregloCaracteres[i - 1] != '('
+						&& arregloCaracteres[i - 1] != 'v' && arregloCaracteres[i - 1] != '^'
+						&& arregloCaracteres[i - 1] != '>' && arregloCaracteres[i - 1] != '#') {
+					return ("Caracter invalido: Es invalido para " + arregloCaracteres[i] + " tener un '"
+							+ arregloCaracteres[i - 1] + "' a su izquierda.");
 
 				}
 
-				if (r[i + 1] != ')' && r[i + 1] != '^' && r[i + 1] != 'v' && r[i + 1] != '>' && r[i + 1] != '#') {
-					return ("Caracter invalido: Es invalido para " + r[i] + "  tener un '" + r[i + 1]
-							+ "'a su derecha.");
+				if (arregloCaracteres[i + 1] != ')' && arregloCaracteres[i + 1] != '^'
+						&& arregloCaracteres[i + 1] != 'v' && arregloCaracteres[i + 1] != '>'
+						&& arregloCaracteres[i + 1] != '#') {
+					return ("Caracter invalido: Es invalido para " + arregloCaracteres[i] + "  tener un '"
+							+ arregloCaracteres[i + 1] + "' a su derecha.");
 				}
-			} else if (r[i] == 'v' || r[i] == '^' || r[i] == '>' || r[i] == '#') {
-				if ((!(r[i + 1] >= (int) 'A' && (int) r[i + 1] <= (int) 'Z')) && r[i + 1] != '(') {
-					return ("Caracter invalido: Un no-atomo debe comenzar con '('.");
+			} else if (arregloCaracteres[i] == 'v' || arregloCaracteres[i] == '^' || arregloCaracteres[i] == '>'
+					|| arregloCaracteres[i] == '#') {
+				if ((!(arregloCaracteres[i + 1] >= (int) 'A' && (int) arregloCaracteres[i + 1] <= (int) 'Z'))
+						&& arregloCaracteres[i + 1] != '(') {
+					return ("Caracter invalido: Una sub-formula debe comenzar con '('.");
 				}
 			}
+
 		}
+
 		return "Se cayó el sistema, contacte al desarrollador.";
 	}
 
-	// -----------------------------------
 	public boolean isError() {
-		cadena = cadena.replaceAll(" ", "");
+
+		if (cadena.equals("()")) {
+			return true;
+		}
+
 		for (char c : cadena.toCharArray())
 			if ((!((int) c >= (int) 'A' && (int) c <= (int) 'Z')) && c != '!' && c != '^' && c != 'v' && c != '('
 					&& c != ')' && c != '>' && c != '#') {
-				// System.out.println("Illegal Character '" + c + "'");
 				cadena.replace(c, '?'); // Si no es una letra
 			}
 		if (cadena.contains("?"))

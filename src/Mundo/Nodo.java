@@ -2,24 +2,24 @@ package Mundo;
 
 public class Nodo {
 
-	Nodo izquierdo, derecho;
-	private String simbolo;
-	private Boolean valorBooleano; // Boolean value for this node
+	private Nodo izquierdo, derecho;
+	private String data;
+	private Boolean valorBooleano;
 
-	public Nodo(String s) {
+	public Nodo(String simbolo) {
 		izquierdo = null;
 		derecho = null;
-		setSimbolo(s);
+		setData(simbolo);
 	}
 
-	public Nodo(String s, Nodo r, Nodo l) {
+	public Nodo(String simbolo, Nodo r, Nodo l) {
 		izquierdo = l;
 		derecho = r;
-		setSimbolo(s);
+		setData(simbolo);
 	}
 
-	public void setBool(Boolean pop) {
-		valorBooleano = pop;
+	public void setBool(Boolean booleano) {
+		valorBooleano = booleano;
 	}
 
 	public Boolean getBool() {
@@ -43,19 +43,33 @@ public class Nodo {
 	}
 
 	public String getData() {
-		return getSimbolo();
+		return data;
 	}
 
-	public void setData(String s) {
-		setSimbolo(s);
+	public void setData(String simbolo) {
+		this.data = simbolo;
 	}
 
-	public String getSimbolo() {
-		return simbolo;
-	}
-
-	public void setSimbolo(String simbolo) {
-		this.simbolo = simbolo;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Nodo other = (Nodo) obj;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		} else if (!data.equals(other.data))
+			return false;
+		return true;
 	}
 
 }

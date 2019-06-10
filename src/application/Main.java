@@ -2,9 +2,9 @@ package application;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /*
  * Authors: Andres Llinas & Daniel Bonilla
@@ -15,7 +15,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource("/application/VentanaPrincipal.fxml"));
-			Scene scene = new Scene(root, 540, 300);
+			Scene scene = new Scene(root, 560, 480);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();

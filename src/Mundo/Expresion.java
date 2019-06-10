@@ -1,9 +1,22 @@
 package Mundo;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
 
 import application.TreeDisplay;
+import sun.util.BuddhistCalendar;
+
+/*
+ * Authors: Andres Llinas & Daniel Bonilla
+ */
 
 public class Expresion {
 	private String expresionCadena = "";
@@ -15,15 +28,13 @@ public class Expresion {
 		root = new Nodo(expresionCadena);
 		construirArbol(root);
 
-		Scanner archivoEscaneado = new Scanner(new File("src/Mundo/ejemploEvaluacion.txt"));
-
-		while (archivoEscaneado.hasNext()) {
-			String linea = archivoEscaneado.nextLine();
-			if (linea.charAt(0) != '(') {
-				String[] lineaDividida = linea.split(" ");
-				setAtomo(lineaDividida[0], lineaDividida[1]);
-			}
+		// Inicializa todos los atomos como false
+		int letra = 65;
+		for (int i = 0; i < 26; i++) {
+			setAtomo("" + (char) letra, "false");
+			letra++;
 		}
+
 	}
 
 	private void construirArbol(Nodo nodo) { // Construye el arbol desde la expresion
@@ -42,11 +53,9 @@ public class Expresion {
 		}
 
 		char splitChar = nodoCadena.charAt(operadorPrincipal); // Hace split en el caracter mas importante
-//-----------------------------------------------------------------------------------------------------------------------------------------------
 		if (splitChar == 'v' || splitChar == '^' || splitChar == '>' || splitChar == '#') { // Set the left and right
 																							// nodes equal to the
 																							// expression that is the
-			// left and right of the MSC
 			String izquierdo = nodoCadena.substring(0, operadorPrincipal);
 			String derecho = nodoCadena.substring(operadorPrincipal + 1, nodoCadena.length());
 			nodo.setData(splitChar + "");
@@ -139,13 +148,117 @@ public class Expresion {
 			return condicional(evaluarH(nodo.getIzquierdo()), evaluarH(nodo.getDerecho()));
 		} else if (nodo.getData().equals("#")) // BICONDICIONAL
 		{
-			return condicional(evaluarH(nodo.getIzquierdo()), evaluarH(nodo.getDerecho()));
+			return bicondicional(evaluarH(nodo.getIzquierdo()), evaluarH(nodo.getDerecho()));
 		}
-//-------------------------------------------------------------------------------------------------------------------------------------------
 		return false;
 	}
 
-//------------------------------------------------------------------------------------------------------------------------------------
+	public static void main(String[] args) {
+		try {
+			Expresion miExp = new Expresion("(((Pv(!P))^(P^(QvP)))#P)");
+			ArrayList<Boolean> columna = miExp.generarColumnaDeVerdad();
+			System.out.println(columna);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void removerDuplicados(ArrayList<Nodo> lista) {
+		for (int i = 0; i < lista.size(); i++) {
+			for (int j = i + 1; j < lista.size(); j++) {
+				if (lista.get(i).equals(lista.get(j))) {
+					lista.remove(j);
+					j--;
+				}
+			}
+		}
+	}
+
+	public ArrayList<Boolean> generarColumnaDeVerdad() {
+		ArrayList<Boolean> columnaVerdad = new ArrayList<>();
+		ArrayList<Nodo> hojas = new ArrayList<>();
+		devolverHojas(root, hojas);
+		ArrayList<Nodo> hojasSinRepetir = new ArrayList<>(hojas);
+		removerDuplicados(hojasSinRepetir);
+
+		for (Nodo element : hojas) {
+
+			if (!hojasSinRepetir.contains(element)) {
+
+				hojasSinRepetir.add(element);
+			}
+		}
+		// unificarNodosIguales(hojas);
+
+		for (int i = 0; i < hojas.size(); i++) {
+			System.out.println(hojas.get(i).getData() + " = " + hojas.get(i).getBool());
+		}
+
+		int numFilas = (int) Math.pow(hojasSinRepetir.size(), 2);
+		int k = numFilas / 2;
+		ArrayList<Integer> cadaCuantoCambianLosAtomos = new ArrayList<>();
+		for (int i = 0; i < hojasSinRepetir.size(); i++) {
+			cadaCuantoCambianLosAtomos.add(k);
+			k /= 2;
+		}
+		for (int j = 0; j < numFilas; j++) {// * Itera a traves de las filas que tendría la tabla de verdad
+			for (int i = 0; i < hojasSinRepetir.size(); i++) {// Itera en la cantidad de atomos de la expresion
+
+				if (j % cadaCuantoCambianLosAtomos.get(i) == 0) {
+					hojasSinRepetir.get(i).setBool(!(hojasSinRepetir.get(i).getBool()));
+				}
+				for (Nodo nodo : hojas) {
+					if (nodo.equals(hojas.get(i))) {
+						nodo.setBool(hojasSinRepetir.get(i).getBool());
+					}
+				}
+			}
+
+			columnaVerdad.add(this.evaluar());
+		}
+		return columnaVerdad;
+	}
+
+	public Nodo buscarNodo(String data, Nodo nodo) {
+		if (nodo != null) {
+			if (nodo.getData().equals(data)) {
+				return nodo;
+			} else {
+				Nodo foundNode = buscarNodo(data, nodo.getIzquierdo());
+				if (foundNode == null) {
+					foundNode = buscarNodo(data, nodo.getDerecho());
+				}
+				return foundNode;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	public static void devolverHojas(Nodo nodo, ArrayList<Nodo> hojas) {
+
+		if (nodo == null)
+			return;
+
+		if (nodo.getIzquierdo() == null && nodo.getDerecho() == null) {
+			hojas.add(nodo);
+		}
+		devolverHojas(nodo.getIzquierdo(), hojas);
+		devolverHojas(nodo.getDerecho(), hojas);
+	}
+
+//	private int getNumHojas(Nodo nodo) {
+//		if (nodo == null)
+//			return 0;
+//		if (nodo.getIzquierdo() == null && nodo.getDerecho() == null)
+//			return 1;
+//		else
+//			return getNumHojas(nodo.getIzquierdo()) + getNumHojas(nodo.getDerecho());
+//	}
+
 	public boolean condicional(boolean atomo1, boolean atomo2) {
 		return (atomo1 && !atomo2) ? false : true;
 	}
@@ -153,21 +266,6 @@ public class Expresion {
 	public boolean bicondicional(boolean atomo1, boolean atomo2) {
 		return (atomo1 == atomo2);
 	}
-
-//	public static void main(String[] args) {
-//		// prueba condicional
-//		System.out.println("0  0 " + condicional(false, false));
-//		System.out.println("0  1 " + condicional(false, true));
-//		System.out.println("1  0 " + condicional(true, false));
-//		System.out.println("1  1 " + condicional(true, true));
-//
-//		// prueba bicondicional
-//		System.out.println("\n bicondicional:");
-//		System.out.println("0  0 " + bicondicional(false, false));
-//		System.out.println("0  1 " + bicondicional(false, true));
-//		System.out.println("1  0 " + bicondicional(true, false));
-//		System.out.println("1  1 " + bicondicional(true, true));
-//	}
 
 	public Expresion copia() {
 		try {
@@ -179,94 +277,7 @@ public class Expresion {
 		}
 	}
 
-	Nodo normalizador() { // Normaliza un arbol
-		while (isNormal(root) == false)
-			root = normalizadorH(root);
-		return root;
-	}
-
-	Nodo normalizadorH(Nodo nodo) { // funcion recursiva para normalizador
-		switch (nodo.getData().charAt(0)) {
-		case '!':
-			if (nodo.getDerecho().getData().charAt(0) == '!') // Si tiene un ! sobre un !
-				return normalizadorH(nodo.getDerecho().getDerecho()); // Entonces los quita del arbol
-			else if (nodo.getDerecho().getData().charAt(0) == 'v') // Si tienes un ! sobre un ^
-			{
-				Nodo nodoConjuncion = new Nodo("^"); // Crea nodos nuevos
-				Nodo izquierdo = new Nodo("!");
-				Nodo derecho = new Nodo("!");
-
-				nodoConjuncion.setIzquierdo(izquierdo); // Setea las dos negaciones como hijas del nodo ^.
-				nodoConjuncion.setDerecho(derecho);
-
-				izquierdo.setDerecho(normalizadorH(nodo.getDerecho().getIzquierdo()));
-				// Y copia la expresion a partir de ahi en adelante
-				derecho.setDerecho(normalizadorH(nodo.getDerecho().getDerecho()));
-				return nodoConjuncion;
-			} else
-				return normalizadorH(nodo.getDerecho());
-		case '^':
-			if (nodo.getDerecho().getData().charAt(0) == 'v') // Si tiene un ^ sobre un v
-			{
-				Nodo nodoDisyuncion = new Nodo("v"); // Crea nodos nuevos
-				Nodo izquierdo = new Nodo("^");
-				Nodo derecho = new Nodo("^");
-
-				nodoDisyuncion.setIzquierdo(izquierdo); // Hace los nodos v hijos del nodo ^
-				nodoDisyuncion.setDerecho(derecho);
-
-				izquierdo.setIzquierdo(nodo.getIzquierdo()); // Setea el nodo izquierdo de cada uno de estos hijos igual
-																// al nodo
-				// que se encuentra a la izquierda del nodo ^
-				derecho.setIzquierdo(nodo.getIzquierdo());
-
-				izquierdo.setDerecho(normalizadorH(nodo.getDerecho().getIzquierdo()));
-				// Y el nodo derecho debe ser lo que esté a la derecha e izquierda del nodo v
-				// anterior.
-				derecho.setDerecho(normalizadorH(nodo.getDerecho().getDerecho()));
-
-				return nodoDisyuncion;
-			} else {
-				nodo.setIzquierdo(normalizadorH(nodo.getIzquierdo()));
-				nodo.setDerecho(normalizadorH(nodo.getDerecho()));
-				return nodo;
-			}
-		case 'v':
-			nodo.setIzquierdo(normalizadorH(nodo.getIzquierdo()));
-			nodo.setDerecho(normalizadorH(nodo.getDerecho()));
-			return nodo;
-		default:
-			return nodo;
-		}
-	}
-
-	Boolean isNormal(Nodo nodo) { // Verifica un arbol para ver si esta en forma normal
-		if (nodo.getIzquierdo() == null && nodo.getDerecho() == null)
-			return true; // Si llegó hasta un atomo, retorna true
-
-		switch (nodo.getData().charAt(0)) { // Si este nodo-simbolo es un...
-		case '!':
-			if (nodo.getDerecho().getData().charAt(0) == '!')
-				return false; // Y el texto en el nodo también es un !, entonces no es normal
-			else if (nodo.getDerecho().getData().charAt(0) == 'v')
-				return false; // Si el texto en el nodo es un v, entonces no es normal
-			else
-				return isNormal(nodo.getDerecho()); // De otra manera, siga verificando
-		case '^':
-			if (nodo.getDerecho().getData().charAt(0) == 'v')
-				return false; // Si tiene un ^ sobre (over) un v, entonces la expresion no es normal
-		default:
-			return (isNormal(nodo.getDerecho()) && isNormal(nodo.getIzquierdo())); // Sigue verificando...
-		}
-	}
-
-	public void graficarNormalizado() { // muestra el arbol normalizado.
-		this.normalizador();
-		TreeDisplay displayNormalizado = new TreeDisplay("Normalizado " + this.toString());
-		displayNormalizado.setRoot(this.root);
-	}
-
-	public String toString() { // returns the print form of an expression.
+	public String toString() { // Devuelve la expresion en forma de cadena de caracteres.
 		return expresionCadena;
 	}
 }

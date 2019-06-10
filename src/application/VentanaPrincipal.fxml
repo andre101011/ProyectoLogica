@@ -7,20 +7,18 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="540.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Mundo.ControladorPrincipal">
+<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="496.0" prefWidth="540.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Mundo.ControladorPrincipal">
 	<children>
-		<MenuBar prefWidth="699.0" VBox.vgrow="NEVER">
+		<MenuBar prefHeight="30.0" prefWidth="540.0" VBox.vgrow="NEVER">
 			<menus>
 				<Menu mnemonicParsing="false" text="Inicio">
 					<items>
-						<MenuItem mnemonicParsing="false" text="New" />
-						<MenuItem mnemonicParsing="false" text="Open…" />
-						<MenuItem mnemonicParsing="false" text="Quit" />
+						<MenuItem mnemonicParsing="false" onAction="#cerrar" text="Salir" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">
@@ -30,49 +28,76 @@
 				</Menu>
 			</menus>
 		</MenuBar>
-		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0">
+		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="462.0" prefWidth="540.0">
 			<children>
-				<SplitPane dividerPositions="0.5" layoutX="252.0" layoutY="87.0" orientation="VERTICAL" prefHeight="373.6" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+				<SplitPane dividerPositions="0.49406175771971494" layoutX="252.0" layoutY="87.0" orientation="VERTICAL" prefHeight="422.0" prefWidth="540.0" AnchorPane.bottomAnchor="-43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 					<items>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="538.0">
 							<children>
-								<TextField fx:id="jtfTextoEntrada" editable="true" focusTraversable="false" layoutX="14.0" layoutY="45.0" onAction="#graficar" prefHeight="52.0" prefWidth="486.0" promptText="(p↔q)∧(q∨¬p)→(¬q)">
+								<TextArea fx:id="jTextArea" layoutX="26.0" layoutY="45.0" onKeyPressed="#validarTeclasNoCaracteres" onKeyTyped="#validarTeclasCaracteres" onMouseClicked="#actualizarCaret" prefHeight="146.0" prefWidth="486.0">
 									<font>
-										<Font name="Arial" size="20.0" />
+										<Font size="18.0" />
 									</font>
-									<cursor>
-										<Cursor fx:constant="TEXT" />
-									</cursor>
-								</TextField>
-								<Label layoutX="14.0" layoutY="14.0" prefHeight="18.0" prefWidth="454.0" text="Ingrese la expresión de Lógica Proposicional aplicando precedencia" />
+								</TextArea>
+								<Label layoutX="26.0" layoutY="14.0" prefHeight="18.0" prefWidth="513.0" text="Ingrese las expresiones de Lógica Proposicional aplicando precedencia" />
 							</children>
 						</AnchorPane>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="211.0" prefWidth="538.0">
 							<children>
-								<Button fx:id="btnEvaluar" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="45.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="138.0" text="Evaluar" textAlignment="CENTER">
+								<Button fx:id="btnBorrar" alignment="CENTER" contentDisplay="CENTER" layoutX="21.0" layoutY="142.0" mnemonicParsing="false" onAction="#borrar" prefHeight="43.0" prefWidth="138.0" text="Borrar" textAlignment="CENTER">
 									<font>
-										<Font size="19.0" />
+										<Font size="16.0" />
 									</font>
 									<cursor>
 										<Cursor fx:constant="DEFAULT" />
 									</cursor>
 								</Button>
-                        <Button fx:id="btnGraficar" alignment="CENTER" contentDisplay="CENTER" layoutX="190.0" layoutY="45.0" mnemonicParsing="false" onAction="#graficar" prefHeight="43.0" prefWidth="138.0" text="Borrar Todo" textAlignment="CENTER">
-                           <font>
-                              <Font size="19.0" />
-                           </font>
-                           <cursor>
-                              <Cursor fx:constant="DEFAULT" />
-                           </cursor>
-                        </Button>
-                        <Button fx:id="btnBorrar" alignment="CENTER" contentDisplay="CENTER" layoutX="371.0" layoutY="45.0" mnemonicParsing="false" onAction="#borrar" prefHeight="43.0" prefWidth="138.0" text="Borrar Todo" textAlignment="CENTER">
-                           <font>
-                              <Font size="19.0" />
-                           </font>
-                           <cursor>
-                              <Cursor fx:constant="DEFAULT" />
-                           </cursor>
-                        </Button>
+								<Button fx:id="btnGraficar" alignment="CENTER" contentDisplay="CENTER" layoutX="197.0" layoutY="142.0" mnemonicParsing="false" onAction="#graficar" prefHeight="43.0" prefWidth="138.0" text="Graficar" textAlignment="CENTER">
+									<font>
+										<Font size="16.0" />
+									</font>
+									<cursor>
+										<Cursor fx:constant="DEFAULT" />
+									</cursor>
+								</Button>
+								<Button fx:id="btnBorrarTodo" alignment="CENTER" contentDisplay="CENTER" layoutX="378.0" layoutY="142.0" mnemonicParsing="false" onAction="#borrarTodo" prefHeight="43.0" prefWidth="138.0" text="Borrar Todo" textAlignment="CENTER">
+									<font>
+										<Font size="16.0" />
+									</font>
+									<cursor>
+										<Cursor fx:constant="DEFAULT" />
+									</cursor>
+								</Button>
+								<Button layoutX="21.0" layoutY="82.0" mnemonicParsing="false" onAction="#agregarCondicional" prefHeight="43.0" prefWidth="138.0" text="Condicional">
+									<font>
+										<Font size="16.0" />
+									</font>
+								</Button>
+								<Button layoutX="197.0" layoutY="82.0" mnemonicParsing="false" onAction="#agregarBicondicional" prefHeight="43.0" prefWidth="138.0" text="Bicondicional">
+									<font>
+										<Font size="16.0" />
+									</font>
+								</Button>
+								<Button layoutX="378.0" layoutY="82.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="138.0" text="Verificar Validez">
+									<font>
+										<Font size="16.0" />
+									</font>
+								</Button>
+								<Button fx:id="conjuncion" layoutX="21.0" layoutY="25.0" mnemonicParsing="false" onAction="#agregarConjuncion" prefHeight="43.0" prefWidth="138.0" text="Conjunción">
+									<font>
+										<Font size="16.0" />
+									</font>
+								</Button>
+								<Button layoutX="197.0" layoutY="25.0" mnemonicParsing="false" onAction="#agregarDisyuncion" prefHeight="43.0" prefWidth="138.0" text="Disyunción">
+									<font>
+										<Font size="16.0" />
+									</font>
+								</Button>
+								<Button layoutX="378.0" layoutY="25.0" mnemonicParsing="false" onAction="#agregarNegacion" prefHeight="43.0" prefWidth="138.0" text="Negación">
+									<font>
+										<Font size="16.0" />
+									</font>
+								</Button>
 							</children>
 						</AnchorPane>
 					</items>

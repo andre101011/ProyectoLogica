@@ -2,48 +2,70 @@ package Mundo;
 
 import java.io.FileNotFoundException;
 
+import org.omg.CORBA.INITIALIZE;
+
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+
 import application.TreeDisplay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+/*
+ * Authors: Andres Llinas & Daniel Bonilla
+ */
 
 public class ControladorPrincipal {
 
-	/*
-	 * Validar que solo use pueda poner una letra letra dentro de cada() Validar
-	 * flechas que se salen de los parentesis Poner botones de tautologia y
-	 * contradiccion
-	 */
-
 	@FXML
-	private Button btnConjuncion;
-
-	@FXML
-	private Button btnDisyuncion;
-
-	@FXML
-	private Button btnImplicacion;
-
-	@FXML
-	private Button btnBicondicional;
-
-	@FXML
-	private Button btnNegacion;
-
-	@FXML
-	private Button btnBorrar;
-
-	@FXML
-	private TextField jtfTextoEntrada;
+	private TextArea campoDeTexto;
 
 	private int ultimoCaret;
 
 	@FXML
+	public void initialize() {
+	}
+
+	@FXML
 	public void graficar(ActionEvent ae) throws FileNotFoundException {
-		String unaExpresionCadena = jtfTextoEntrada.getText();
+
+		String unaExpresionCadena = campoDeTexto.getText();
+
+		ParseError posibleError = new ParseError(unaExpresionCadena); // Asegurate de que no estas parseando mal la
+		try {
+
+			// cadena
+			if (posibleError.isError()) {
+
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Advertencia");
+				alert.setHeaderText("Ups! Expresion invalida");
+				alert.setContentText(unaExpresionCadena + " - " + posibleError.errorString);
+				alert.showAndWait();
+
+			} else {
+				Expresion nuevaExpresion = new Expresion(unaExpresionCadena);
+
+				TreeDisplay display = new TreeDisplay(nuevaExpresion.toString()); // Grafica sin normalizar.
+				display.setRoot(nuevaExpresion.root);
+
+			}
+		} catch (Exception e) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Advertencia");
+			alert.setHeaderText("Ups! Expresion invalida");
+			alert.setContentText("¡Apagalo Otto! ¡Apagalo!");
+			alert.showAndWait();
+		}
+	}
+
+	@FXML
+	public void evaluar(ActionEvent ae) throws FileNotFoundException {
+		String unaExpresionCadena = "(" + campoDeTexto.getText() + ")";
 
 		ParseError posibleError = new ParseError(unaExpresionCadena); // Asegurate de que no estas parseando mal la
 																		// cadena
@@ -57,42 +79,77 @@ public class ControladorPrincipal {
 
 		} else {
 			Expresion nuevaExpresion = new Expresion(unaExpresionCadena);
-
-			TreeDisplay display = new TreeDisplay(nuevaExpresion.toString()); // Grafica sin normalizar.
-			display.setRoot(nuevaExpresion.root);
+			boolean resultado = nuevaExpresion.evaluar();
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Resultado");
+			alert.setHeaderText("Resultado de la evaluacion booleana de la expresion");
+			alert.setContentText(unaExpresionCadena + " = " + resultado);
+			alert.showAndWait();
 
 		}
 	}
 
-//	public void agregarConjuncion(ActionEvent event) {
-//
-//		jtfTextoEntrada.insertText(ultimoCaret, ("()^()"));
-//
-//	}
-//
-//	public void agregarDisyuncion() {
-//		jtfTextoEntrada.insertText(ultimoCaret, ("()∨()"));
-//	}
-//
-//	public void agregarImplicacion() {
-//
-//		jtfTextoEntrada.insertText(ultimoCaret, ("()→()"));
-//	}
-//
-//	public void agregarBicondicional() {
-//		jtfTextoEntrada.insertText(ultimoCaret, ("()↔()"));
-//	}
-//
-//	public void agregarNegacion() {
-//
-//		jtfTextoEntrada.insertText(ultimoCaret, ("¬()"));
-//	}
+	public void agregarConjuncion(ActionEvent event) {
+		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
+			campoDeTexto.insertText(ultimoCaret, ("()^()"));
+		}
+	}
+
+	public void agregarDisyuncion() {
+		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
+			campoDeTexto.insertText(ultimoCaret, ("()v()"));
+		}
+	}
+
+	public void agregarCondicional() {
+		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
+			campoDeTexto.insertText(ultimoCaret, ("()>()"));
+		}
+	}
+
+	public void agregarBicondicional() {
+		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
+			campoDeTexto.insertText(ultimoCaret, ("()#()"));
+		}
+	}
+
+	public void agregarNegacion() {
+		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
+			campoDeTexto.insertText(ultimoCaret, ("¬()"));
+		}
+	}
+
+	public void cerrar() {
+		System.exit(0);
+	}
+
+	public void borrarTodo() {
+
+		campoDeTexto.setText("");
+		ultimoCaret = 0;
+	}
 
 	public void borrar() {
 
-		jtfTextoEntrada.setText("");
-		ultimoCaret = 0;
-		jtfTextoEntrada.setEditable(false);
+		String texto = campoDeTexto.getText();
+		String cadena = "";
+		int caretParaBorrar = ultimoCaret;
+		int tamanio = campoDeTexto.getText().length();
+		System.out.println(ultimoCaret);
+		if (tamanio > 0) {
+			char anterior = campoDeTexto.getText().charAt(ultimoCaret - 1);
+
+			if (!Character.isLetter(anterior)) {
+				return;
+			}
+
+			cadena += (texto.substring(0, caretParaBorrar - 1));
+		}
+		if (caretParaBorrar <= texto.length()) {
+			cadena += texto.substring(caretParaBorrar, texto.length());
+		}
+		campoDeTexto.setText(cadena);
+
 	}
 
 	/**
@@ -112,7 +169,96 @@ public class ControladorPrincipal {
 	/**
 	 * @return the jtfTextoEntrada
 	 */
-	public TextField getJtfTextoEntrada() {
-		return jtfTextoEntrada;
+	public TextArea getJtfTextoEntrada() {
+		return campoDeTexto;
 	}
+
+	@FXML
+	public void actualizarCaret() {
+		ultimoCaret = campoDeTexto.getCaretPosition();
+
+	}
+
+	@FXML
+	// Valida las teclas no caracteres, como pueden ser Ctrl, ALT, Enter
+	public void validarTeclasNoCaracteres(KeyEvent key) {
+		actualizarCaret();
+
+		if (key.getCode().equals(KeyCode.LEFT) || key.getCode().equals(KeyCode.RIGHT)) {
+			key.consume();
+		}
+		int tamanioTexto = campoDeTexto.getText().length();
+
+		// Valida que si hay un operador o parentesis antes del cursor, no se pueda
+		// borrar
+		if (tamanioTexto > 0 && ultimoCaret > 0) {
+			char charAnterior = campoDeTexto.getText().charAt(ultimoCaret - 1);
+
+			if (isOperador(charAnterior) && key.getCode().equals(KeyCode.BACK_SPACE)) {
+				key.consume();
+			}
+		}
+
+		// Valida que si hay un operador inmediatamente despues del cursor, este no
+		// se pueda eliminar con la tecla suprimir
+		if (ultimoCaret < tamanioTexto) {
+			char charPosterior = campoDeTexto.getText().charAt(ultimoCaret);
+
+			if (isOperador(charPosterior) && key.getCode().equals(KeyCode.DELETE)) {
+				System.out.println("no borra");
+				key.consume();
+			}
+		}
+
+	}
+
+	@FXML
+	public void validarTeclasCaracteres(KeyEvent key) {
+
+		// Valida que solo se puedan ingresar letras dentro de parentesis
+		if (!estaDentroDeParentesis()) {
+			if (key.getCharacter().charAt(0) == '!') {
+				System.out.println("EXCLAMACION!");
+			} else {
+				key.consume();
+			}
+		}
+
+		// Valida que no se puedan ingresar caracteres distintos a letras mayúsculas
+		if (Character.isLowerCase(key.getCharacter().charAt(0)) || !Character.isLetter(key.getCharacter().charAt(0))) {
+			key.consume();
+		}
+
+		System.out.println(key.getCharacter());
+
+	}
+
+	public boolean isOperador(char caracter) {
+		if (caracter == '(' || caracter == ')' || caracter == 'v' || caracter == '^' || caracter == '>'
+				|| caracter == '#') {
+			return true;
+
+		} else {
+			return false;
+		}
+	}
+
+	public boolean estaDentroDeParentesis() {
+		actualizarCaret();
+		char charAnterior = ' ';
+		char charPosterior = ' ';
+		try {
+			charAnterior = campoDeTexto.getText().charAt(ultimoCaret - 1);
+			charPosterior = campoDeTexto.getText().charAt(ultimoCaret);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		// Valida que solo se puedan ingresar los caracteres dentro de parentesis
+		if (!(charAnterior == '(' && charPosterior == ')')) {
+			return false;
+		}
+		return true;
+	}
+
 }

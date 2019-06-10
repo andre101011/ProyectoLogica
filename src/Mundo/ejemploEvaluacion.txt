@@ -1,7 +1,7 @@
 A true
-B false
+B true
 C true
-D false
+D true
 E true
 F true
 G true
@@ -17,14 +17,14 @@ P true
 Q true
 R true
 S true
-T false
-U false
+T true
+U true
 V true
 W true
 X true
 Y true
 Z true
-(T v)
+(T#A)
 (! (! (! (! M))))
 (((! S) v (! T)) ^ (! U))
 (A ^ (B v (! (! (! C)))))

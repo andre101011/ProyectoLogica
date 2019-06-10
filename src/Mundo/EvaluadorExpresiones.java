@@ -1,16 +1,20 @@
 package Mundo;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
+import javax.swing.JTextArea;
 
 public class EvaluadorExpresiones {
 	public static void main(String[] args) throws FileNotFoundException {
 		System.out.println("Evaluando");
 
-		Scanner scan = new Scanner(new File("ejemploEvaluacion.txt"));
+		JTextArea miArea = new JTextArea();
+		miArea.setText("una expresion \n otra expresion \n otra mas");
+
+		Scanner scan = new Scanner(miArea.getText());
 
 		ArrayList<String> listaExpresiones = new ArrayList<String>();
 
@@ -21,7 +25,7 @@ public class EvaluadorExpresiones {
 			String linea = scan.nextLine();
 			if (linea.charAt(0) == '(')
 				listaExpresiones.add(linea);
-			else // Print atoms
+			else // Imprime los atomos
 			{
 				String[] c = linea.split(" ");
 				if (i % 8 == 0)

@@ -34,7 +34,7 @@
 					<items>
 						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="208.0" prefWidth="538.0">
 							<children>
-								<TextArea fx:id="jTextArea" layoutX="26.0" layoutY="45.0" onKeyPressed="#validarTeclasNoCaracteres" onKeyTyped="#validarTeclasCaracteres" onMouseClicked="#actualizarCaret" prefHeight="146.0" prefWidth="486.0">
+								<TextArea fx:id="jTextArea" layoutX="26.0" layoutY="45.0" onKeyPressed="#validarTeclasNoCaracteres" onKeyTyped="#validarTeclasCaracteres" onMouseClicked="#actualizarCaret" onMouseReleased="#deseleccionar" prefHeight="146.0" prefWidth="486.0">
 									<font>
 										<Font size="18.0" />
 									</font>

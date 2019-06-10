@@ -1,6 +1,7 @@
 package Mundo;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import application.TreeDisplay;
 import javafx.event.ActionEvent;
@@ -10,6 +11,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.Line;
 
 /*
  * Authors: Andres Llinas & Daniel Bonilla
@@ -74,7 +76,14 @@ public class ControladorPrincipal {
 			alert.showAndWait();
 
 		} else {
+
+			ArrayList<ArrayList<Boolean>> arrayColumnas = new ArrayList<>();
+			for (String linea : jTextArea.getText().split("\\n")) {
+				arrayColumnas.add(new Expresion(linea).generarColumnaDeVerdad());
+			}
+		// Tratando de leer varias filas de expresiones
 			Expresion nuevaExpresion = new Expresion(unaExpresionCadena);
+
 			boolean resultado = nuevaExpresion.evaluar();
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Resultado");
@@ -111,7 +120,7 @@ public class ControladorPrincipal {
 
 	public void agregarNegacion() {
 		if (estaDentroDeParentesis() || jTextArea.getText().isEmpty()) {
-			jTextArea.insertText(ultimoCaret, ("¬()"));
+			jTextArea.insertText(ultimoCaret, ("!()"));
 		}
 	}
 
@@ -213,15 +222,13 @@ public class ControladorPrincipal {
 
 		// Valida que solo se puedan ingresar letras dentro de parentesis
 		if (!estaDentroDeParentesis()) {
-			if (key.getCharacter().charAt(0) == '!') {
-				System.out.println("EXCLAMACION!");
-			} else {
-				key.consume();
-			}
+			key.consume();
 		}
 
 		// Valida que no se puedan ingresar caracteres distintos a letras mayúsculas
-		if (Character.isLowerCase(key.getCharacter().charAt(0)) || !Character.isLetter(key.getCharacter().charAt(0))) {
+		if (Character.isLowerCase(key.getCharacter().charAt(0)) || !Character.isLetter(key.getCharacter().charAt(0)))
+
+		{
 			key.consume();
 		}
 
@@ -255,6 +262,10 @@ public class ControladorPrincipal {
 			return false;
 		}
 		return true;
+	}
+
+	public void deseleccionar() {
+		jTextArea.deselect();
 	}
 
 }

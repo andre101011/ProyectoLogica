@@ -2,10 +2,6 @@ package Mundo;
 
 import java.io.FileNotFoundException;
 
-import org.omg.CORBA.INITIALIZE;
-
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
-
 import application.TreeDisplay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,7 +18,7 @@ import javafx.scene.input.KeyEvent;
 public class ControladorPrincipal {
 
 	@FXML
-	private TextArea campoDeTexto;
+	private TextArea jTextArea;
 
 	private int ultimoCaret;
 
@@ -33,7 +29,7 @@ public class ControladorPrincipal {
 	@FXML
 	public void graficar(ActionEvent ae) throws FileNotFoundException {
 
-		String unaExpresionCadena = campoDeTexto.getText();
+		String unaExpresionCadena = "(" + jTextArea.getText() + ")";
 
 		ParseError posibleError = new ParseError(unaExpresionCadena); // Asegurate de que no estas parseando mal la
 		try {
@@ -65,7 +61,7 @@ public class ControladorPrincipal {
 
 	@FXML
 	public void evaluar(ActionEvent ae) throws FileNotFoundException {
-		String unaExpresionCadena = "(" + campoDeTexto.getText() + ")";
+		String unaExpresionCadena = "(" + jTextArea.getText() + ")";
 
 		ParseError posibleError = new ParseError(unaExpresionCadena); // Asegurate de que no estas parseando mal la
 																		// cadena
@@ -90,32 +86,32 @@ public class ControladorPrincipal {
 	}
 
 	public void agregarConjuncion(ActionEvent event) {
-		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
-			campoDeTexto.insertText(ultimoCaret, ("()^()"));
+		if (estaDentroDeParentesis() || jTextArea.getText().isEmpty()) {
+			jTextArea.insertText(ultimoCaret, ("()^()"));
 		}
 	}
 
 	public void agregarDisyuncion() {
-		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
-			campoDeTexto.insertText(ultimoCaret, ("()v()"));
+		if (estaDentroDeParentesis() || jTextArea.getText().isEmpty()) {
+			jTextArea.insertText(ultimoCaret, ("()v()"));
 		}
 	}
 
 	public void agregarCondicional() {
-		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
-			campoDeTexto.insertText(ultimoCaret, ("()>()"));
+		if (estaDentroDeParentesis() || jTextArea.getText().isEmpty()) {
+			jTextArea.insertText(ultimoCaret, ("()>()"));
 		}
 	}
 
 	public void agregarBicondicional() {
-		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
-			campoDeTexto.insertText(ultimoCaret, ("()#()"));
+		if (estaDentroDeParentesis() || jTextArea.getText().isEmpty()) {
+			jTextArea.insertText(ultimoCaret, ("()#()"));
 		}
 	}
 
 	public void agregarNegacion() {
-		if (estaDentroDeParentesis() || campoDeTexto.getText().isEmpty()) {
-			campoDeTexto.insertText(ultimoCaret, ("¬()"));
+		if (estaDentroDeParentesis() || jTextArea.getText().isEmpty()) {
+			jTextArea.insertText(ultimoCaret, ("¬()"));
 		}
 	}
 
@@ -125,19 +121,19 @@ public class ControladorPrincipal {
 
 	public void borrarTodo() {
 
-		campoDeTexto.setText("");
+		jTextArea.setText("");
 		ultimoCaret = 0;
 	}
 
 	public void borrar() {
 
-		String texto = campoDeTexto.getText();
+		String texto = jTextArea.getText();
 		String cadena = "";
 		int caretParaBorrar = ultimoCaret;
-		int tamanio = campoDeTexto.getText().length();
+		int tamanio = jTextArea.getText().length();
 		System.out.println(ultimoCaret);
 		if (tamanio > 0) {
-			char anterior = campoDeTexto.getText().charAt(ultimoCaret - 1);
+			char anterior = jTextArea.getText().charAt(ultimoCaret - 1);
 
 			if (!Character.isLetter(anterior)) {
 				return;
@@ -148,7 +144,7 @@ public class ControladorPrincipal {
 		if (caretParaBorrar <= texto.length()) {
 			cadena += texto.substring(caretParaBorrar, texto.length());
 		}
-		campoDeTexto.setText(cadena);
+		jTextArea.setText(cadena);
 
 	}
 
@@ -170,12 +166,12 @@ public class ControladorPrincipal {
 	 * @return the jtfTextoEntrada
 	 */
 	public TextArea getJtfTextoEntrada() {
-		return campoDeTexto;
+		return jTextArea;
 	}
 
 	@FXML
 	public void actualizarCaret() {
-		ultimoCaret = campoDeTexto.getCaretPosition();
+		ultimoCaret = jTextArea.getCaretPosition();
 
 	}
 
@@ -187,12 +183,12 @@ public class ControladorPrincipal {
 		if (key.getCode().equals(KeyCode.LEFT) || key.getCode().equals(KeyCode.RIGHT)) {
 			key.consume();
 		}
-		int tamanioTexto = campoDeTexto.getText().length();
+		int tamanioTexto = jTextArea.getText().length();
 
 		// Valida que si hay un operador o parentesis antes del cursor, no se pueda
 		// borrar
 		if (tamanioTexto > 0 && ultimoCaret > 0) {
-			char charAnterior = campoDeTexto.getText().charAt(ultimoCaret - 1);
+			char charAnterior = jTextArea.getText().charAt(ultimoCaret - 1);
 
 			if (isOperador(charAnterior) && key.getCode().equals(KeyCode.BACK_SPACE)) {
 				key.consume();
@@ -202,7 +198,7 @@ public class ControladorPrincipal {
 		// Valida que si hay un operador inmediatamente despues del cursor, este no
 		// se pueda eliminar con la tecla suprimir
 		if (ultimoCaret < tamanioTexto) {
-			char charPosterior = campoDeTexto.getText().charAt(ultimoCaret);
+			char charPosterior = jTextArea.getText().charAt(ultimoCaret);
 
 			if (isOperador(charPosterior) && key.getCode().equals(KeyCode.DELETE)) {
 				System.out.println("no borra");
@@ -248,8 +244,8 @@ public class ControladorPrincipal {
 		char charAnterior = ' ';
 		char charPosterior = ' ';
 		try {
-			charAnterior = campoDeTexto.getText().charAt(ultimoCaret - 1);
-			charPosterior = campoDeTexto.getText().charAt(ultimoCaret);
+			charAnterior = jTextArea.getText().charAt(ultimoCaret - 1);
+			charPosterior = jTextArea.getText().charAt(ultimoCaret);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

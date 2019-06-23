@@ -154,15 +154,15 @@ public class Expresion {
 	}
 
 	public static void main(String[] args) {
-		try {
-			Expresion miExp = new Expresion("(((Pv(!P))^(P^(QvP)))#P)");
-			ArrayList<Boolean> columna = miExp.generarColumnaDeVerdad();
-			System.out.println(columna);
-
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Expresion miExp = new Expresion("((P)^(A))");
+//			ArrayList<Boolean> columna = miExp.generarColumnaDeVerdad(3);
+//			System.out.println(columna);
+//
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 
@@ -181,32 +181,18 @@ public class Expresion {
 		ArrayList<Boolean> columnaVerdad = new ArrayList<>();
 		ArrayList<Nodo> hojas = new ArrayList<>();
 		devolverHojas(root, hojas);
-		ArrayList<Nodo> hojasSinRepetir = new ArrayList<>(hojas);
-		removerDuplicados(hojasSinRepetir);
+		ArrayList<Nodo> hojasSinRepetir = devolverHojasSinRepetir();
 
-		for (Nodo element : hojas) {
-
-			if (!hojasSinRepetir.contains(element)) {
-
-				hojasSinRepetir.add(element);
-			}
-		}
-		// unificarNodosIguales(hojas);
-
-		for (int i = 0; i < hojas.size(); i++) {
-			System.out.println(hojas.get(i).getData() + " = " + hojas.get(i).getBool());
-		}
-
-		int numFilas = (int) Math.pow(hojasSinRepetir.size(), 2);
+		int numFilas = (int) Math.pow(2, hojasSinRepetir.size());
 		int k = numFilas / 2;
 		ArrayList<Integer> cadaCuantoCambianLosAtomos = new ArrayList<>();
 		for (int i = 0; i < hojasSinRepetir.size(); i++) {
 			cadaCuantoCambianLosAtomos.add(k);
 			k /= 2;
 		}
-		for (int j = 0; j < numFilas; j++) {// * Itera a traves de las filas que tendría la tabla de verdad
-			for (int i = 0; i < hojasSinRepetir.size(); i++) {// Itera en la cantidad de atomos de la expresion
 
+		for (int j = 0; j < numFilas; j++) {// Itera a traves de las filas que tendría la tabla de verdad
+			for (int i = 0; i < hojasSinRepetir.size(); i++) {// Itera en la cantidad de atomos de la expresion
 				if (j % cadaCuantoCambianLosAtomos.get(i) == 0) {
 					hojasSinRepetir.get(i).setBool(!(hojasSinRepetir.get(i).getBool()));
 				}
@@ -216,7 +202,6 @@ public class Expresion {
 					}
 				}
 			}
-
 			columnaVerdad.add(this.evaluar());
 		}
 		return columnaVerdad;
@@ -227,18 +212,18 @@ public class Expresion {
 			if (nodo.getData().equals(data)) {
 				return nodo;
 			} else {
-				Nodo foundNode = buscarNodo(data, nodo.getIzquierdo());
-				if (foundNode == null) {
-					foundNode = buscarNodo(data, nodo.getDerecho());
+				Nodo nodoEncontrado = buscarNodo(data, nodo.getIzquierdo());
+				if (nodoEncontrado == null) {
+					nodoEncontrado = buscarNodo(data, nodo.getDerecho());
 				}
-				return foundNode;
+				return nodoEncontrado;
 			}
 		} else {
 			return null;
 		}
 	}
 
-	public static void devolverHojas(Nodo nodo, ArrayList<Nodo> hojas) {
+	public void devolverHojas(Nodo nodo, ArrayList<Nodo> hojas) {
 
 		if (nodo == null)
 			return;
@@ -248,6 +233,19 @@ public class Expresion {
 		}
 		devolverHojas(nodo.getIzquierdo(), hojas);
 		devolverHojas(nodo.getDerecho(), hojas);
+	}
+
+	public ArrayList<Nodo> devolverHojasSinRepetir() {
+		ArrayList<Nodo> hojas = new ArrayList<>();
+		devolverHojas(root, hojas);
+		ArrayList<Nodo> hojasSinRepetir = new ArrayList<>(hojas);
+		removerDuplicados(hojasSinRepetir);
+		for (Nodo hoja : hojas) {
+			if (!hojasSinRepetir.contains(hoja)) {
+				hojasSinRepetir.add(hoja);
+			}
+		}
+		return hojasSinRepetir;
 	}
 
 //	private int getNumHojas(Nodo nodo) {
@@ -279,5 +277,19 @@ public class Expresion {
 
 	public String toString() { // Devuelve la expresion en forma de cadena de caracteres.
 		return expresionCadena;
+	}
+
+	/**
+	 * @return the root
+	 */
+	public Nodo getRoot() {
+		return root;
+	}
+
+	/**
+	 * @param root the root to set
+	 */
+	public void setRoot(Nodo root) {
+		this.root = root;
 	}
 }

@@ -1,4 +1,4 @@
-package Mundo;
+package modelo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,8 +11,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
-import application.TreeDisplay;
 import sun.util.BuddhistCalendar;
+import vista.TreeDisplay;
 
 /*
  * Authors: Andres Llinas & Daniel Bonilla
@@ -22,7 +22,7 @@ public class Expresion {
 	private String expresionCadena = "";
 	Nodo root;
 
-	public Expresion(String unaExpresionCadena) throws FileNotFoundException {
+	public Expresion(String unaExpresionCadena) {
 		// Crea un nuevo objeto expresion y su arbol, y muestra su arbol
 		expresionCadena = unaExpresionCadena;
 		root = new Nodo(expresionCadena);
@@ -263,16 +263,6 @@ public class Expresion {
 
 	public boolean bicondicional(boolean atomo1, boolean atomo2) {
 		return (atomo1 == atomo2);
-	}
-
-	public Expresion copia() {
-		try {
-			return new Expresion(expresionCadena); // Retorna una nueva expresion hecha a partir de la expresion antigua
-		} catch (FileNotFoundException e) {
-			System.out.println("Archivo no encontrado! Verifique directorios.");
-			return null;
-
-		}
 	}
 
 	public String toString() { // Devuelve la expresion en forma de cadena de caracteres.

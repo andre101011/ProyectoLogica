@@ -1,6 +1,9 @@
-package Mundo;
+package modelo;
 
-class ParseError extends Exception {
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
+public class ParseError extends Exception {
 	private String cadena;
 	String errorString;
 
@@ -8,8 +11,19 @@ class ParseError extends Exception {
 
 		this.cadena = cadena.toUpperCase();
 		this.cadena = cadena.replaceAll(" ", "");
-		if (isError())
+		if (isError()) {
 			errorString = defineElError();
+			mostrarAlerta();
+		}
+	}
+
+	private void mostrarAlerta() {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setTitle("Advertencia");
+		alert.setHeaderText("Ups! Expresion invalida");
+		alert.setContentText(cadena + " - " + errorString);
+		alert.showAndWait();
+
 	}
 
 	public String getErrorString() {

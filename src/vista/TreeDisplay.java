@@ -1,20 +1,14 @@
-package application;
-
-/*
- * Authors: Andres Llinas & Daniel Bonilla
- */
+package vista;
 
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
 
-import Mundo.Nodo;
+import modelo.Nodo;
 
 import java.util.*;
 /*
  * Un componente grafico para graficar el contenido de un arbol binario
- * 
-
  */
 
 public class TreeDisplay extends JComponent {

@@ -1,4 +1,4 @@
-package Mundo;
+package modelo;
 
 public class Nodo {
 

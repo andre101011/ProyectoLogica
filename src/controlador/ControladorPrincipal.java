@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import modelo.ConjuntoExpresiones;
@@ -131,7 +132,10 @@ public class ControladorPrincipal {
 	}
 
 	public void agregarNegacion() {
+		System.out.println(estaDentroDeParentesis());
 		if (estaDentroDeParentesis() || campoTexto.getText().isEmpty()) {
+			System.out.println("entra");
+
 			campoTexto.insertText(ultimoCaret, ("!()"));
 		}
 	}
@@ -204,63 +208,67 @@ public class ControladorPrincipal {
 	@FXML
 	public void actualizarCaret() {
 		ultimoCaret = campoTexto.getCaretPosition();
-
+		System.out.println("nuevo caret: " + ultimoCaret);
 	}
 
 	@FXML
 	// Valida las teclas no caracteres, como pueden ser Ctrl, ALT, Enter
 	public void validarTeclasNoCaracteres(KeyEvent key) {
 
-//		actualizarCaret();
-//
-//		if (key.getCode().equals(KeyCode.LEFT) || key.getCode().equals(KeyCode.RIGHT)) {
-//			key.consume();
-//		}
-//		int tamanioTexto = campoTexto.getText().length();
-//
-//		// Valida que si hay un operador o parentesis antes del cursor, no se pueda
-//		// borrar
-//		if (tamanioTexto > 0 && ultimoCaret > 0) {
-//			char charAnterior = campoTexto.getText().charAt(ultimoCaret - 1);
-//
-//			if (isOperador(charAnterior) && key.getCode().equals(KeyCode.BACK_SPACE)) {
-//				key.consume();
+		actualizarCaret();
+
+		if (key.getCode().equals(KeyCode.LEFT) || key.getCode().equals(KeyCode.RIGHT)) {
+			key.consume();
+		}
+		int tamanioTexto = campoTexto.getText().length();
+
+		// Valida que si hay un operador o parentesis antes del cursor, no se pueda
+		// borrar
+		if (tamanioTexto > 0 && ultimoCaret > 0) {
+			char charAnterior = campoTexto.getText().charAt(ultimoCaret - 1);
+
+			if (isOperador(charAnterior) && key.getCode().equals(KeyCode.BACK_SPACE)) {
+				key.consume();
+			}
+//			if (charAnterior==')'&& ultimoCaret) {
+//				
 //			}
-////			if (charAnterior==')'&& ultimoCaret) {
-////				
-////			}
-//		}
-//
-//		// Valida que si hay un operador inmediatamente despues del cursor, este no
-//		// se pueda eliminar con la tecla suprimir
-//		if (ultimoCaret < tamanioTexto) {
-//			char charPosterior = campoTexto.getText().charAt(ultimoCaret);
-//
-//			if (isOperador(charPosterior) && key.getCode().equals(KeyCode.DELETE)) {
-//				System.out.println("no borra");
-//				key.consume();
-//			}
-//		}
+		}
+
+		// Valida que si hay un operador inmediatamente despues del cursor, este no
+		// se pueda eliminar con la tecla suprimir
+		if (ultimoCaret < tamanioTexto) {
+			char charPosterior = campoTexto.getText().charAt(ultimoCaret);
+
+			if (isOperador(charPosterior) && key.getCode().equals(KeyCode.DELETE)) {
+				System.out.println("no borra");
+				key.consume();
+			}
+		}
 
 	}
 
 	@FXML
 	public void validarTeclasCaracteres(KeyEvent key) {
-//
-//		// Valida que solo se puedan ingresar letras dentro de parentesis
-//		if (!estaDentroDeParentesis()) {
-//			key.consume();
-//		}
-//
-//		// Valida que no se puedan ingresar caracteres distintos a letras mayÃºsculas
-//		if (Character.isLowerCase(key.getCharacter().charAt(0)) || !Character.isLetter(key.getCharacter().charAt(0)))
-//
-//		{
-//			key.consume();
-//		}
-//
-//		System.out.println(key.getCharacter());
-//
+
+		// Valida que solo se puedan ingresar letras dentro de parentesis
+
+		if (!campoTexto.getText().isEmpty()) {
+
+			if (!estaDentroDeParentesis()) {
+				key.consume();
+			}
+		}
+
+		// Valida que no se puedan ingresar caracteres distintos a letras mayÃºsculas
+		if (Character.isLowerCase(key.getCharacter().charAt(0)) || !Character.isLetter(key.getCharacter().charAt(0)))
+
+		{
+			key.consume();
+		}
+
+		System.out.println(key.getCharacter());
+
 	}
 
 	public boolean isOperador(char caracter) {
@@ -274,14 +282,16 @@ public class ControladorPrincipal {
 	}
 
 	public boolean estaDentroDeParentesis() {
-		actualizarCaret();
 		char charAnterior = ' ';
 		char charPosterior = ' ';
+		System.out.println(ultimoCaret);
 		try {
 			charAnterior = campoTexto.getText().charAt(ultimoCaret - 1);
+			System.out.println("anterior " + charAnterior);
 			charPosterior = campoTexto.getText().charAt(ultimoCaret);
+			System.out.println("posterior " + charPosterior);
 		} catch (Exception e) {
-			// TODO: handle exception
+
 		}
 
 		// Valida que solo se puedan ingresar los caracteres dentro de parentesis

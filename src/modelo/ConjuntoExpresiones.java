@@ -19,26 +19,27 @@ public class ConjuntoExpresiones {
 	public boolean verificarValidez() {
 		conjuntoCadena = "";
 		Boolean esValida = false;
+		System.out.println(expresionesCadena);
 		for (int i = 0; i < expresionesCadena.size(); i++) {
 
 			String expresionCadena = expresionesCadena.get(i);
-//			expresionCadena = "(" + expresionCadena + ")";
 			ParseError posibleError = new ParseError(expresionCadena); // Asegurate de que no estas parseando mal la
 																		// cadena
 			if (!posibleError.isError()) {
 
+				Expresion expresion = new Expresion(expresionCadena);
+				System.out.println(expresion.generarColumnaDeVerdad());
+
 				if (i != 0) {
 					conjuntoCadena = "(" + conjuntoCadena;
 				}
-
-//				expresionCadena = "(" + expresionCadena + ")";
 
 				if (i == 0) {
 					conjuntoCadena += expresionCadena;
 				} else if (i <= expresionesCadena.size() - 2) {
 					conjuntoCadena += "^" + expresionCadena + ")";
 				} else if (i == expresionesCadena.size() - 1) {
-					conjuntoCadena += ">" + expresionCadena + ")";
+					conjuntoCadena += "^(!" + expresionCadena + "))";
 				}
 
 			}
@@ -58,13 +59,13 @@ public class ConjuntoExpresiones {
 			}
 			System.out.println(expresionConjunto.generarColumnaDeVerdad());
 			// PRUEBA/
-			boolean tautologia = true;
+			boolean contradiccion = true;
 			for (Boolean valor : expresionConjunto.generarColumnaDeVerdad()) {
-				if (valor != true) {
-					tautologia = false;
+				if (valor == true) {
+					contradiccion = false;
 				}
 			}
-			if (tautologia) {
+			if (contradiccion) {
 				esValida = true;
 			}
 		}

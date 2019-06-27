@@ -32,6 +32,10 @@ public class ParseError extends Exception {
 
 	String defineElError() {
 
+		if (cadena.contains("()")) {
+			return "Faltan atomos";
+		}
+
 		if (cadena.equals("()")) {
 			return "Ingrese una expresion con precedencia";
 		}
@@ -101,6 +105,10 @@ public class ParseError extends Exception {
 
 	public boolean isError() {
 
+		if (cadena.contains("()")) {
+			return true;
+		}
+
 		if (cadena.equals("()")) {
 			return true;
 		}
@@ -137,9 +145,14 @@ public class ParseError extends Exception {
 			return true;
 		}
 
+		if (arregloDeChars.length == 0) {
+			return true;
+		}
+
 		for (int i = 0; i < arregloDeChars.length; i++) { // Si hay caracteres invalidos a la derecha o izquierda
 															// del atomo
 			if ((int) arregloDeChars[i] >= (int) 'A' && (int) arregloDeChars[i] <= (int) 'Z') {
+
 				if (arregloDeChars[i - 1] != '!' && arregloDeChars[i - 1] != '(' && arregloDeChars[i - 1] != 'v'
 						&& arregloDeChars[i - 1] != '^' && arregloDeChars[i - 1] != '>' && arregloDeChars[i - 1] != '#')
 					return true; // Verifica el char a la izquierda de i
@@ -148,12 +161,12 @@ public class ParseError extends Exception {
 					return true; // Y a la derecha...
 
 			} else if (arregloDeChars[i] == 'v' || arregloDeChars[i] == '^' || arregloDeChars[i] == '>'
-					|| arregloDeChars[i] == '#')
+					|| arregloDeChars[i] == '#') {
 				if ((!(arregloDeChars[i + 1] >= (int) 'A' && (int) arregloDeChars[i + 1] <= (int) 'Z'))
 						&& arregloDeChars[i + 1] != '(')
 					return true; // Si el char es un !, y el siquiente no es un atomo o un '('
+			}
 		}
-
 		return false;
 
 	}

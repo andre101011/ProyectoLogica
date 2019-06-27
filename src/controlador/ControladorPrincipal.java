@@ -64,6 +64,7 @@ public class ControladorPrincipal {
 
 		// cadena
 		if (!posibleError.isError()) {
+			System.out.println("entra");
 			listaExpresiones.getItems().add(unaExpresionCadena);
 			campoTexto.clear();
 		}
@@ -99,10 +100,10 @@ public class ControladorPrincipal {
 		ConjuntoExpresiones conjuntoExpresiones = new ConjuntoExpresiones(expresionesCadena, conclusion);
 		if (conjuntoExpresiones.verificarValidez()) {
 			Utilidades.mostrarMensaje("Validez del argumento", conjuntoExpresiones.getConjuntoCadena()
-					+ "\nes Tautologia, por lo tanto es consecuencia logica, y es valida ");
+					+ "\nEs insatisfacible, por lo tanto es consecuencia logica, y es valida ");
 		} else {
 			Utilidades.mostrarMensaje("Validez del argumento", conjuntoExpresiones.getConjuntoCadena()
-					+ "\nNo es Tautologia, por lo tanto es no consecuencia logica, ni es valida ");
+					+ "\nEs satisfacible, por lo tanto NO es consecuencia logica, ni es valida ");
 		}
 
 	}

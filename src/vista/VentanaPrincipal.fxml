@@ -125,10 +125,13 @@
 						<Insets left="10.0" right="10.0" />
 					</GridPane.margin>
 					<center>
-						<TextField fx:id="campoTexto" onKeyPressed="#validarTeclasNoCaracteres" onKeyTyped="#validarTeclasCaracteres" onMouseClicked="#actualizarCaret">
+						<TextField fx:id="campoTexto" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onKeyPressed="#validarTeclasNoCaracteres" onKeyTyped="#validarTeclasCaracteres" onMouseClicked="#actualizarCaret">
                      <font>
-                        <Font size="16.0" />
-                     </font></TextField>
+                        <Font size="18.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </BorderPane.margin></TextField>
 					</center>
 					<right>
 						<Button fx:id="btnIngresar" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#ingresar" text="Ingresar" BorderPane.alignment="CENTER">
